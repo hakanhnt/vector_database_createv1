@@ -453,6 +453,9 @@ def main():
                     else:
                         raw_text = extract_text_from_epub(str(temp_path), extract_progress)
 
+                    if not raw_text or not raw_text.strip():
+                        raise ValueError("Yüklenen dosyadan okunabilir bir metin çıkarılamadı. PDF dosyası taranmış resimlerden oluşuyor (aranamaz PDF) veya şifreli/bozuk olabilir.")
+
                     progress_bar.progress(0.4)
                     status_text.text(f"✓ Metin çıkarıldı: {len(raw_text):,} karakter")
 
