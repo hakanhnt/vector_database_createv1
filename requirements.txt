@@ -1,0 +1,22 @@
+# PDF İşleme
+pdfplumber>=0.10.0
+# pypdf>=3.0.0  # Alternatif, pdfplumber varsayılan olarak kullanılır
+
+# EPUB İşleme
+ebooklib>=0.18
+
+# LangChain (Metin Parçalama)
+langchain>=0.1.0
+langchain-community>=0.0.10
+
+# OpenAI
+openai>=1.0.0
+
+# Anthropic (MiniMax Anthropic-compatible API)
+anthropic>=0.18.0
+
+# Pinecone
+pinecone>=9.0.0
+
+# Ortam Değişkenleri
+python-dotenv>=1.0.0
