@@ -77,8 +77,12 @@ logger = logging.getLogger(__name__)
 DEFAULT_EMBEDDING_MODEL = "nomic-embed-text"
 DEFAULT_CHUNK_SIZE = 750
 DEFAULT_CHUNK_OVERLAP = 75
-DEFAULT_DIMENSION = 768  # nomic-embed-text = 768 boyut
 DEFAULT_LLM_MODEL = "MiniMax-M2.7"  # MiniMax model
+
+EMBEDDING_MODELS = {
+    "nomic-embed-text": 768,
+    "bge-m3": 1024
+}
 
 # =============================================================================
 # YARDIMCI FONKSİYONLAR
@@ -378,14 +382,18 @@ def main():
         step=5
     )
 
-    embedding_model = st.sidebar.text_input(
+    embedding_model = st.sidebar.selectbox(
         "Embedding Modeli",
-        value=DEFAULT_EMBEDDING_MODEL
+        options=list(EMBEDDING_MODELS.keys()),
+        index=0
     )
+    
+    embedding_dimension = EMBEDDING_MODELS[embedding_model]
 
+    default_index_name = "book-vectors" if embedding_model == "nomic-embed-text" else "book-vectors-bge"
     index_name = st.sidebar.text_input(
         "Pinecone İndeks Adı",
-        value="book-vectors"
+        value=default_index_name
     )
 
     batch_size = st.sidebar.slider(
@@ -468,7 +476,7 @@ def main():
                     status_text.text("🗄️ Pinecone başlatılıyor...")
                     progress_bar.progress(0.8)
 
-                    pc = initialize_pinecone(index_name, dimension=DEFAULT_DIMENSION)
+                    pc = initialize_pinecone(index_name, dimension=embedding_dimension)
                     index = pc.Index(index_name)
 
                     status_text.text("⬆️ Pinecone'a yükleniyor...")
@@ -557,7 +565,7 @@ def main():
                         query_embedding = create_embeddings([query_text], model=embedding_model)[0]
 
                         # 2. Pinecone'a bağlan ve ara
-                        pc = initialize_pinecone(index_name, dimension=DEFAULT_DIMENSION)
+                        pc = initialize_pinecone(index_name, dimension=embedding_dimension)
                         index = pc.Index(index_name)
 
                         # 3. Similarity search - daha fazla parça al
@@ -656,7 +664,7 @@ def main():
         st.subheader("📊 İndeks Bilgisi")
 
         try:
-            pc = initialize_pinecone(index_name, dimension=DEFAULT_DIMENSION)
+            pc = initialize_pinecone(index_name, dimension=embedding_dimension)
             index = pc.Index(index_name)
             stats = index.describe_index_stats()
 
@@ -666,7 +674,7 @@ def main():
             with col_s2:
                 st.metric("İndeks Adı", index_name)
             with col_s3:
-                st.metric("Dimension", stats.get('dimension', DEFAULT_DIMENSION))
+                st.metric("Dimension", stats.get('dimension', embedding_dimension))
 
         except Exception as e:
             st.warning(f"İndeks bilgisi alınamadı: {e}")
