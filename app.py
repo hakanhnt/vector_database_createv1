@@ -282,9 +282,9 @@ def generate_with_minimax(
     )
 
     # Sistem mesajı
-    system_prompt = """Sen bir kitap içeriği hakkında soruları yanıtlayan asistansın.
-Verilen bağlamdaki bilgilere göre Türkçe yanıt ver.
-Sadece verilen bağlamdan bilgi kullan. Bağlamda cevap yoksa bilgi bulunamadığını söyle."""
+    system_prompt = """Sen bir kitap içeriği hakkında soruları yanıtlayan detaylı ve kapsamlı bir asistansın.
+Verilen bağlamdaki (kitap parçaları) bilgilere sadık kalarak, soruları açıklayıcı ve akıcı bir şekilde Türkçe olarak yanıtla.
+Sadece verilen bağlamdaki bilgileri kullan. Eğer aranan bilgi bağlamda kesinlikle yer almıyorsa, dışarıdan bilgi uydurmak yerine bu bilginin kitapta bulunmadığını belirt."""
 
     # Kullanıcı mesajı
     user_prompt = f"""Bağlam:
@@ -297,7 +297,7 @@ Türkçe yanıt:"""
     try:
         message = client.messages.create(
             model=model,
-            max_tokens=1024,
+            max_tokens=2048,
             system=system_prompt,
             messages=[
                 {"role": "user", "content": [{"type": "text", "text": user_prompt}]}
